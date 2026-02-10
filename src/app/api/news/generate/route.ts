@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase";
 
+export const maxDuration = 120;
+
 const VALUESERP_KEY = process.env.VALUESERP_API_KEY!;
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY!;
 const JINA_KEY = process.env.JINA_API_KEY!;
