@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#0A0A09"/>
+  <circle cx="256" cy="220" r="100" fill="none" stroke="#6B8FC5" stroke-width="8"/>
+  <path d="M256 140 L256 300" stroke="#3DAB8F" stroke-width="6" stroke-linecap="round"/>
+  <path d="M200 200 L256 140 L312 200" fill="none" stroke="#3DAB8F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="256" y="380" text-anchor="middle" fill="#FAFAF9" font-family="system-ui, sans-serif" font-size="48" font-weight="700">RADAR</text>
+  <text x="256" y="420" text-anchor="middle" fill="#6B8FC5" font-family="system-ui, sans-serif" font-size="24" font-weight="400">CRIPTO</text>
+</svg>
