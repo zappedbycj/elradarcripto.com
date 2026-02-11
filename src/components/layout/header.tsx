@@ -44,7 +44,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-sm">
       <div className="mx-auto max-w-[1200px] px-4 h-14 flex items-center gap-6">
-        <Link href="/" className="font-mono text-xs font-bold tracking-[0.15em] uppercase text-text-primary flex-shrink-0">
+        <Link href="/" className="font-mono text-sm font-bold tracking-[0.15em] uppercase text-text-primary flex-shrink-0">
           RADAR <MatrixCripto />
         </Link>
 

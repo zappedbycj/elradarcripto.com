@@ -50,19 +50,18 @@ export default function MercadosPage() {
           <Text variant="label" className="mb-4 block text-text-tertiary">Dólar Paralelo — Todos los países</Text>
           <div className="space-y-3">
             {rates.map((rate) => (
-              <div key={rate.code} className="flex items-center gap-4">
-                <span className="text-base">{rate.flag}</span>
-                <span className="font-sans text-xs text-text-secondary w-24">{rate.country}</span>
-                <div className="flex-1">
-                  <PriceDisplay
-                    value={rate.parallel}
-                    delta={rate.delta24h}
-                    prefix={`${rate.currency} `}
-                    decimals={rate.parallel < 100 ? 2 : 0}
-                    size="md"
-                  />
-                </div>
-                <span className="font-mono text-2xs text-text-tertiary">
+              <div key={rate.code} className="flex items-center gap-3 min-w-0">
+                <span className="text-base shrink-0">{rate.flag}</span>
+                <span className="font-sans text-xs text-text-secondary w-16 sm:w-24 shrink-0 truncate">{rate.country}</span>
+                <PriceDisplay
+                  value={rate.parallel}
+                  delta={rate.delta24h}
+                  prefix={`${rate.currency} `}
+                  decimals={rate.parallel < 100 ? 2 : 0}
+                  size="md"
+                  className="shrink-0"
+                />
+                <span className="font-mono text-2xs text-text-tertiary hidden sm:block shrink-0 whitespace-nowrap">
                   Oficial: {rate.currency} {rate.official.toLocaleString("es-419")}
                 </span>
               </div>
