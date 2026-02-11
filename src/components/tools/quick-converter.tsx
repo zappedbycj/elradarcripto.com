@@ -34,6 +34,8 @@ export function QuickConverter() {
           className="max-w-[120px]"
           min="0"
           step="any"
+          aria-label="Cantidad en BTC"
+          name="btc-amount"
         />
         <span className="font-mono text-xs text-text-secondary">BTC</span>
         <span className="text-text-tertiary">&rarr;</span>

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PriceDisplay } from "@/components/ui/price-display";
 import { QuickConverter } from "@/components/tools/quick-converter";
-import { ArrowRightLeft, BarChart3, TrendingUp, Globe, Calculator, Percent, Users } from "lucide-react";
+import { ArrowRightLeft, BarChart3, Globe, Calculator, Percent, Users } from "lucide-react";
 import { useCryptoPrices } from "@/lib/hooks/use-crypto-prices";
 
 const tools = [
@@ -46,13 +46,6 @@ const tools = [
     title: "Calculadora de Ganancia",
     description: "Simula cuánto habrías ganado comprando cripto en una fecha pasada. DCA y lump sum.",
     icon: Calculator,
-  },
-  {
-    href: "#",
-    title: "Historial de Precios",
-    description: "Gráficos de 7, 30 y 90 días para Bitcoin, Ethereum y las principales criptomonedas.",
-    icon: TrendingUp,
-    badge: "Próximamente",
   },
 ];
 
@@ -93,26 +86,21 @@ export default function HerramientasPage() {
         <Text variant="label" className="mb-4 block text-text-tertiary">Todas las herramientas</Text>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {tools.map((tool) => {
-            const inner = (
-              <Card hoverable={!tool.badge} className={`p-4 h-full ${tool.badge ? "opacity-60" : ""}`}>
-                <div className="flex items-start gap-3">
-                  <tool.icon size={16} className="text-accent mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-sans text-xs font-medium text-text-primary leading-snug">
-                      {tool.title}
-                      {tool.badge && (
-                        <span className="ml-2 font-mono text-2xs text-text-tertiary bg-surface-alt px-1.5 py-0.5 rounded-[3px] border border-border-subtle">
-                          {tool.badge}
-                        </span>
-                      )}
-                    </h3>
-                    <p className="text-2xs text-text-tertiary mt-1 leading-relaxed">{tool.description}</p>
+            return (
+              <Link key={tool.title} href={tool.href}>
+                <Card hoverable className="p-4 h-full">
+                  <div className="flex items-start gap-3">
+                    <tool.icon size={16} className="text-accent mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-sans text-xs font-medium text-text-primary leading-snug">
+                        {tool.title}
+                      </h3>
+                      <p className="text-2xs text-text-tertiary mt-1 leading-relaxed">{tool.description}</p>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </Link>
             );
-            if (tool.badge) return <div key={tool.title}>{inner}</div>;
-            return <Link key={tool.title} href={tool.href}>{inner}</Link>;
           })}
         </div>
       </div>

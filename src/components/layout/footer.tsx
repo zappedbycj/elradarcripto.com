@@ -15,14 +15,14 @@ const legalLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border mt-16 py-8">
+    <footer className="border-t border-border mt-16 py-8 pb-24 md:pb-8">
       <div className="mx-auto max-w-[1200px] px-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-6">
           <div>
-            <Link href="/" className="font-mono text-2xs font-bold tracking-[0.15em] uppercase text-text-secondary">
+            <Link href="/" className="font-mono text-xs font-bold tracking-[0.15em] uppercase text-text-secondary">
               Radar Cripto
             </Link>
-            <p className="text-2xs text-text-tertiary mt-1 max-w-[300px]">
+            <p className="text-xs text-text-tertiary mt-1 max-w-[300px]">
               Cripto, divisas y herramientas financieras para América Latina.
             </p>
           </div>
@@ -33,7 +33,7 @@ export function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-mono text-2xs text-text-tertiary hover:text-text-secondary transition-colors duration-150"
+                  className="font-mono text-xs text-text-tertiary hover:text-text-secondary transition-colors duration-150"
                 >
                   {link.label}
                 </Link>
@@ -44,7 +44,7 @@ export function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-mono text-2xs text-text-tertiary hover:text-text-secondary transition-colors duration-150"
+                  className="font-mono text-xs text-text-tertiary hover:text-text-secondary transition-colors duration-150"
                 >
                   {link.label}
                 </Link>
@@ -54,14 +54,14 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border pt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="font-mono text-2xs text-text-tertiary">
+          <span className="font-mono text-xs text-text-tertiary">
             &copy; {new Date().getFullYear()} Radar Cripto
           </span>
           <a
             href="https://x.com/ElRadardeCesar"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-2xs text-text-tertiary hover:text-accent transition-colors duration-150"
+            className="font-mono text-xs text-text-tertiary hover:text-accent transition-colors duration-150"
           >
             @ElRadardeCesar
           </a>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const navLinks = [
@@ -17,6 +18,7 @@ function MatrixCripto() {
   const [display, setDisplay] = useState(target);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const scramble = () => {
       let iteration = 0;
       const interval = setInterval(() => {
@@ -41,6 +43,7 @@ function MatrixCripto() {
 }
 
 export function Header() {
+  const pathname = usePathname();
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-sm">
       <div className="mx-auto max-w-[1200px] px-4 h-14 flex items-center gap-6">
@@ -53,6 +56,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={(link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)) ? "page" : undefined}
               className="font-mono text-2xs uppercase tracking-[0.08em] text-text-secondary hover:text-text-primary px-3 py-2 rounded-[4px] transition-colors duration-150"
             >
               {link.label}

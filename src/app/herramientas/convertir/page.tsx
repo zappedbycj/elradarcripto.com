@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
@@ -98,12 +99,15 @@ export default function ConverterPage() {
               className="max-w-[160px] text-base"
               min="0"
               step="any"
+              aria-label="Cantidad a convertir"
+              name="convert-amount"
             />
             <div className="relative">
               <select
                 value={cryptoIdx}
                 onChange={(e) => setCryptoIdx(Number(e.target.value))}
-                className="appearance-none bg-bg border border-border rounded-[4px] px-3 py-2 pr-8 font-mono text-xs text-text-primary min-h-[44px] cursor-pointer"
+                aria-label="Seleccionar criptomoneda"
+                className="appearance-none bg-bg border border-border rounded-[4px] px-3 py-2 pr-8 font-mono text-xs text-text-primary min-h-[44px] cursor-pointer [&>option]:bg-bg [&>option]:text-text-primary"
               >
                 {cryptoOptions.map((c, i) => (
                   <option key={c.symbol} value={i}>{c.symbol}</option>
@@ -116,7 +120,8 @@ export default function ConverterPage() {
               <select
                 value={fiatIdx}
                 onChange={(e) => setFiatIdx(Number(e.target.value))}
-                className="appearance-none bg-bg border border-border rounded-[4px] px-3 py-2 pr-8 font-mono text-xs text-text-primary min-h-[44px] cursor-pointer"
+                aria-label="Seleccionar moneda fiat"
+                className="appearance-none bg-bg border border-border rounded-[4px] px-3 py-2 pr-8 font-mono text-xs text-text-primary min-h-[44px] cursor-pointer [&>option]:bg-bg [&>option]:text-text-primary"
               >
                 {fiatOptions.map((f, i) => (
                   <option key={f.code} value={i}>{f.code}</option>
@@ -176,16 +181,6 @@ export default function ConverterPage() {
 
         <Separator className="my-8" />
 
-        {/* Chart placeholder */}
-        <section className="mb-8">
-          <Text variant="label" className="mb-4 block text-text-tertiary">Historial (30 d\u00edas)</Text>
-          <div className="h-[200px] rounded-[6px] border border-border-subtle flex items-center justify-center">
-            <span className="font-mono text-2xs text-text-tertiary">Gr\u00e1fico — pr\u00f3ximamente</span>
-          </div>
-        </section>
-
-        <Separator className="my-8" />
-
         {/* FAQ */}
         <section className="mb-8">
           <Text variant="label" className="mb-4 block text-text-tertiary">Preguntas Frecuentes</Text>
@@ -214,19 +209,15 @@ export default function ConverterPage() {
 
         <Separator className="my-8" />
 
-        {/* Related news */}
+        {/* Related news — links to real noticias page */}
         <section>
           <Text variant="label" className="mb-4 block text-text-tertiary">Noticias sobre {crypto?.name ?? "Bitcoin"}</Text>
-          <div className="space-y-3">
-            {["Bitcoin supera los $97,000 en medio de tensiones regulatorias",
-              "Binance P2P duplica volumen en LATAM durante enero",
-              "Solana registra rally del 15% semanal impulsada por memecoins"
-            ].map((title, i) => (
-              <a key={i} href="#" className="block text-sm text-text-secondary hover:text-accent transition-colors duration-150">
-                {title}
-              </a>
-            ))}
-          </div>
+          <Link
+            href="/noticias"
+            className="block text-sm text-accent hover:text-accent/80 transition-colors duration-150"
+          >
+            Ver todas las noticias &rarr;
+          </Link>
         </section>
       </div>
     </PageContainer>
