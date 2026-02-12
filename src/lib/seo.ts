@@ -23,6 +23,14 @@ export function generateWebSiteSchema() {
     "@type": "WebSite",
     name: SITE_NAME,
     url: SITE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/noticias?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 
@@ -32,13 +40,14 @@ export function generateArticleSchema(article: Article) {
     "@type": "NewsArticle",
     headline: article.title,
     description: article.excerpt,
+    articleBody: article.body.replace(/##\s/g, "").slice(0, 5000),
     image: article.image_url ?? undefined,
     datePublished: article.published_at,
     dateModified: article.published_at,
     author: {
       "@type": "Person",
       name: article.author_name,
-      url: article.author_url,
+      url: `${SITE_URL}${article.author_url}`,
     },
     publisher: {
       "@type": "Organization",

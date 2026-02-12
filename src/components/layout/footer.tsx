@@ -9,6 +9,8 @@ const footerLinks = [
 const legalLinks = [
   { href: "/sobre", label: "Sobre nosotros" },
   { href: "/metodologia", label: "Metodología" },
+  { href: "/politica-editorial", label: "Política Editorial" },
+  { href: "/contacto", label: "Contacto" },
   { href: "/privacidad", label: "Privacidad" },
   { href: "/terminos", label: "Términos" },
 ];

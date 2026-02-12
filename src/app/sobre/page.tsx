@@ -3,6 +3,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { Text } from "@/components/ui/text";
 import { Separator } from "@/components/ui/separator";
 import { generateBreadcrumbs } from "@/lib/seo";
+import { authors } from "@/lib/authors";
 
 export const metadata: Metadata = {
   title: "Sobre Nosotros — Cripto y Divisas para LATAM",
@@ -82,28 +83,30 @@ export default function SobrePage() {
           <Text variant="label" className="mb-4 block text-text-tertiary">
             Equipo editorial
           </Text>
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-alt border border-border-subtle">
-            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-accent">C</span>
-            </div>
-            <div>
-              <p className="font-sans text-xs font-medium text-text-primary">
-                Radar Cripto
-              </p>
-              <p className="text-2xs text-text-tertiary mt-1">
-                Equipo editorial especializado en criptomonedas y finanzas
-                LATAM. Análisis de mercado, cobertura regulatoria y herramientas
-                para inversores hispanohablantes.
-              </p>
-              <a
-                href="https://x.com/ElRadardeCesar"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-2 text-2xs text-accent hover:underline"
+          <div className="space-y-3">
+            {authors.map((author) => (
+              <div
+                key={author.slug}
+                className="flex items-start gap-3 p-4 rounded-lg bg-surface-alt border border-border-subtle"
               >
-                @ElRadardeCesar en X
-              </a>
-            </div>
+                <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-accent">
+                    {author.initial}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-sans text-xs font-medium text-text-primary">
+                    {author.name}
+                  </p>
+                  <p className="text-2xs text-text-tertiary mt-0.5">
+                    {author.categories.join(" · ")}
+                  </p>
+                  <p className="text-2xs text-text-tertiary mt-1">
+                    {author.bio}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -114,8 +117,12 @@ export default function SobrePage() {
             Contacto
           </Text>
           <p className="text-sm text-text-secondary">
-            Para consultas editoriales, correcciones o colaboraciones, escríbenos
-            a través de{" "}
+            Para consultas editoriales, correcciones o colaboraciones, visita
+            nuestra{" "}
+            <a href="/contacto" className="text-accent hover:underline">
+              página de contacto
+            </a>{" "}
+            o escríbenos en{" "}
             <a
               href="https://x.com/ElRadardeCesar"
               target="_blank"

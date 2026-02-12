@@ -24,6 +24,7 @@ export async function GET() {
       </news:publication>
       <news:publication_date>${a.published_at}</news:publication_date>
       <news:title>${escapeXml(a.title)}</news:title>
+      <news:keywords>${escapeXml(a.category)}</news:keywords>
     </news:news>${a.image_url ? `
     <image:image>
       <image:loc>${escapeXml(a.image_url)}</image:loc>

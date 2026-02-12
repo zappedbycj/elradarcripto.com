@@ -16,7 +16,7 @@ import { generateArticleSchema, generateBreadcrumbs, SITE_URL } from "@/lib/seo"
 export const revalidate = 900;
 
 export async function generateStaticParams() {
-  const articles = await fetchArticles(50);
+  const articles = await fetchArticles(200);
   return articles.map((a) => ({ slug: a.slug }));
 }
 
@@ -38,6 +38,7 @@ export async function generateMetadata({
       description: article.excerpt,
       type: "article",
       publishedTime: article.published_at,
+      modifiedTime: article.published_at,
       section: article.category,
       authors: [article.author_name],
       ...(article.image_url && {

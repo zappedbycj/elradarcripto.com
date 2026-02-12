@@ -14,6 +14,21 @@ export const metadata: Metadata = {
   description:
     "Últimas noticias de Bitcoin, Ethereum y criptomonedas en español. Análisis de mercado, regulación y adopción en América Latina.",
   alternates: { canonical: "https://elradarcripto.com/noticias" },
+  openGraph: {
+    title: "Noticias Cripto — Radar Cripto",
+    description:
+      "Últimas noticias de Bitcoin, Ethereum y criptomonedas en español. Análisis de mercado, regulación y adopción en América Latina.",
+    url: "https://elradarcripto.com/noticias",
+    type: "website",
+    images: [{ url: "https://elradarcripto.com/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Noticias Cripto — Radar Cripto",
+    description:
+      "Últimas noticias de Bitcoin, Ethereum y criptomonedas en español.",
+    images: ["https://elradarcripto.com/og-image.png"],
+  },
 };
 
 export default async function NoticiasPage() {

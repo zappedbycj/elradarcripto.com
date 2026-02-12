@@ -1,5 +1,11 @@
 import { fetchArticles } from "@/lib/api/news";
 
+function getMimeType(url: string): string {
+  if (url.includes(".jpg") || url.includes(".jpeg")) return "image/jpeg";
+  if (url.includes(".webp")) return "image/webp";
+  return "image/png";
+}
+
 export async function GET() {
   const articles = await fetchArticles(50);
   const siteUrl = "https://elradarcripto.com";
@@ -12,7 +18,7 @@ export async function GET() {
       <description><![CDATA[${a.excerpt}]]></description>
       <pubDate>${new Date(a.published_at).toUTCString()}</pubDate>
       <guid isPermaLink="true">${siteUrl}/noticias/${a.slug}</guid>
-      <author>${a.author_name}</author>${a.image_url ? `\n      <enclosure url="${a.image_url}" type="image/png" />` : ""}
+      <author>${a.author_name}</author>${a.image_url ? `\n      <enclosure url="${a.image_url}" type="${getMimeType(a.image_url)}" />` : ""}
     </item>`
     )
     .join("\n");

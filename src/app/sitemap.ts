@@ -18,6 +18,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/herramientas/spread`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/herramientas/ganancia`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/sobre`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/contacto`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/politica-editorial`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${SITE_URL}/metodologia`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${SITE_URL}/privacidad`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE_URL}/terminos`, changeFrequency: "yearly", priority: 0.2 },

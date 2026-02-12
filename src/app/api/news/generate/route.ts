@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase";
+import { getAuthorByCategory } from "@/lib/authors";
 
 export const maxDuration = 120;
 
@@ -123,6 +124,54 @@ const DIRECTOR_SCHEMA = {
 // ─── Step 2: Writer ─────────────────────────────────────────────────
 // Receives the source + editorial brief, writes the final article.
 
+// ─── Step 2: Analyst (LATAM enrichment) ─────────────────────────────
+
+const ANALYST_PROMPT = `Eres un analista editorial especializado en el impacto de noticias cripto en América Latina.
+
+Recibirás un brief editorial con la noticia. Tu trabajo: enriquecer con ángulo LATAM SOLO cuando sea relevante.
+
+Devuelve 4 campos:
+
+## latamAngle
+Impacto específico para América Latina: remesas, P2P, dólar paralelo, regulación regional, adopción local. Ejemplos: efecto en remesas México-LATAM, impacto en P2P Venezuela/Argentina, regulación Brasil/El Salvador. Si la noticia NO tiene impacto regional directo → devuelve "Sin impacto directo".
+
+## localDataContext
+Datos reales de LATAM que contextualicen la noticia. Ejemplos: volumen P2P en LocalBitcoins/Binance P2P Venezuela, % de adopción cripto en LATAM (Chainalysis), remesas vía cripto. Si no hay datos relevantes → devuelve string vacío.
+
+## contrarian
+Una perspectiva original o contraria que NO esté en el artículo fuente. Puede ser escéptica, optimista diferenciada, o un matiz que los medios ignoran. Si no hay ángulo contrario útil → devuelve string vacío.
+
+## enrichmentData
+Comparaciones históricas o de escala que den contexto. Ejemplo: "La última vez que BTC cayó 20% en una semana fue en junio 2022, cuando pasó de $30K a $17K". Si no hay comparación útil → devuelve string vacío.
+
+REGLA CRÍTICA: Es MEJOR devolver strings vacíos que inventar datos. NUNCA inventes estadísticas.`;
+
+const ANALYST_SCHEMA = {
+  name: "analyst_enrichment",
+  strict: true,
+  schema: {
+    type: "object",
+    required: ["latamAngle", "localDataContext", "contrarian", "enrichmentData"],
+    additionalProperties: false,
+    properties: {
+      latamAngle: { type: "string" },
+      localDataContext: { type: "string" },
+      contrarian: { type: "string" },
+      enrichmentData: { type: "string" },
+    },
+  },
+};
+
+interface AnalystEnrichment {
+  latamAngle: string;
+  localDataContext: string;
+  contrarian: string;
+  enrichmentData: string;
+}
+
+// ─── Step 3: Writer ─────────────────────────────────────────────────
+// Receives the source + editorial brief + analyst enrichment, writes the final article.
+
 const WRITER_PROMPT = `Eres un redactor senior de criptofinanzas. Recibirás un BRIEF EDITORIAL y el contenido fuente original.
 
 FORMATO DEL CAMPO "body" — SIGUE ESTE FORMATO EXACTO:
@@ -181,6 +230,14 @@ REGLAS DE CONTENIDO:
 - Cada afirmación necesita un número del brief. Sin número → no hagas la afirmación.
 - Nombres reales del brief: "según [Nombre], [cargo]". NUNCA inventes personas.
 - Enfoque LATAM cuando sea relevante.
+
+INTEGRACIÓN DE ANÁLISIS LATAM:
+- Si recibes un bloque "ANÁLISIS LATAM" con el brief, intégralo así:
+  - latamAngle (si NO es "Sin impacto directo"): menciónalo naturalmente en un H2, no como sección separada.
+  - contrarian: úsalo como base para el segundo H2 (contra-ángulo). Si está vacío, usa el counterAngle del brief.
+  - enrichmentData: intercala como contexto histórico donde encaje. No fuerces.
+  - localDataContext: úsalo para dar escala LATAM. Si está vacío, no inventes datos locales.
+- NUNCA fuerces un ángulo LATAM. Si el análisis dice "Sin impacto directo", escribe normalmente.
 
 RESTRICCIONES DE LONGITUD (CRÍTICAS — respétalas siempre):
 - Título: MÁXIMO 55 caracteres. Conciso, dato clave. El sitio agrega " | Radar Cripto" automáticamente. NO repitas el nombre del sitio.
@@ -276,11 +333,13 @@ export async function POST(request: NextRequest) {
   try {
     // 1. Search Google News via ValueSERP — rotate queries for diversity
     const queries = [
-      "bitcoin crypto",
-      "ethereum crypto",
-      "crypto regulation",
-      "bitcoin latin america",
-      "cryptocurrency market",
+      "Bitcoin",
+      "Ethereum",
+      "Defi",
+      "Blockchain",
+      "Cryptocurrency",
+      "dolar paralelo",
+      "Crypto Exchanges",
     ];
     // Pick 2 queries per run based on hour to rotate
     const hour = new Date().getUTCHours();
@@ -374,7 +433,16 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // 3c. STEP 2 — Writer executes the brief
+        // 3c. STEP 2 — Analyst enriches with LATAM context
+        const analystRaw = await callOpenRouter(
+          "google/gemini-2.5-flash",
+          ANALYST_PROMPT,
+          `BRIEF:\nÁngulo: ${brief.angle}\nCategoría: ${brief.category}\nTicker: ${brief.relatedTicker}\n\nFUENTE:\n${truncatedSource.slice(0, 4000)}`,
+          ANALYST_SCHEMA
+        );
+        const analyst: AnalystEnrichment = JSON.parse(analystRaw);
+
+        // 3d. STEP 3 — Writer executes the brief + analyst enrichment
         const briefSummary = [
           `ÁNGULO: ${brief.angle}`,
           `CONTRA-ÁNGULO: ${brief.counterAngle}`,
@@ -385,13 +453,24 @@ export async function POST(request: NextRequest) {
           `CATEGORÍA: ${brief.category}`,
         ].join("\n");
 
+        const analystBlock = [
+          `\n\nANÁLISIS LATAM:`,
+          `LATAM: ${analyst.latamAngle}`,
+          `Datos LATAM: ${analyst.localDataContext || "(sin datos)"}`,
+          `Contrarian: ${analyst.contrarian || "(sin ángulo contrario)"}`,
+          `Contexto histórico: ${analyst.enrichmentData || "(sin datos)"}`,
+        ].join("\n");
+
         const articleRaw = await callOpenRouter(
           "google/gemini-2.5-flash",
           WRITER_PROMPT,
-          `BRIEF EDITORIAL:\n${briefSummary}\n\n---\n\nFUENTE ORIGINAL:\n${truncatedSource}`,
+          `BRIEF EDITORIAL:\n${briefSummary}${analystBlock}\n\n---\n\nFUENTE ORIGINAL:\n${truncatedSource}`,
           WRITER_SCHEMA
         );
         const article: WrittenArticle = JSON.parse(articleRaw);
+
+        // Assign author by category
+        const author = getAuthorByCategory(brief.category);
 
         // Convert director's namedSources to article sources format
         const articleSources = brief.namedSources.map((s) => ({
@@ -399,7 +478,7 @@ export async function POST(request: NextRequest) {
           role: s.role,
         }));
 
-        // 3d. Generate image with retry + fallback model
+        // 3e. Generate image with retry + fallback model
         const IMAGE_MODELS = [
           "google/gemini-2.5-flash-image",
           "google/gemini-3-pro-image-preview",
@@ -479,7 +558,7 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // 3e. Insert article
+        // 3f. Insert article
         const { error: insertError } = await supabase
           .from("articles")
           .insert({
@@ -495,6 +574,8 @@ export async function POST(request: NextRequest) {
             sources: articleSources,
             related_ticker: brief.relatedTicker,
             image_alt: article.imageAlt,
+            author_name: author.name,
+            author_url: `/sobre#${author.slug}`,
           });
 
         if (insertError) {
