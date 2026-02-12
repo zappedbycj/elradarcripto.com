@@ -12,6 +12,7 @@ import { LivePriceWidget } from "@/components/news/live-price-widget";
 import { fetchArticles, fetchArticleBySlug } from "@/lib/api/news";
 import { relativeTime } from "@/lib/utils";
 import { generateArticleSchema, generateBreadcrumbs, SITE_URL } from "@/lib/seo";
+import { ShareButtons } from "@/components/news/share-buttons";
 
 export const revalidate = 900;
 
@@ -138,6 +139,10 @@ export default async function ArticlePage({
         <Separator className="mb-8" />
 
         <ArticleBody body={article.body} sources={article.sources} />
+
+        <div className="mt-8 mb-4">
+          <ShareButtons slug={article.slug} title={article.title} />
+        </div>
 
         <Separator className="my-8" />
 
