@@ -63,6 +63,11 @@ BTC, ETH, SOL, BNB, XRP o ADA. El activo más relevante. Default: BTC.
 ## category
 Mercados, Regulación, Divisas, Tecnología, Exchanges o Adopción.
 
+## isRelevant
+¿Este artículo trata PRINCIPALMENTE sobre criptomonedas, blockchain, activos digitales, exchanges, DeFi o finanzas cripto-adyacentes (stablecoins, CBDC, remesas cripto)?
+- true: sí, el tema central es cripto/blockchain/finanzas digitales
+- false: no, el tema es otro (combustibles, deportes, política general, radio, entretenimiento) aunque mencione "blockchain" o "dólar" de pasada
+
 ## imagePrompt
 Prompt corto en inglés para una ilustración editorial abstracta del tema.`;
 
@@ -79,10 +84,12 @@ const DIRECTOR_SCHEMA = {
       "counterAngle",
       "relatedTicker",
       "category",
+      "isRelevant",
       "imagePrompt",
     ],
     additionalProperties: false,
     properties: {
+      isRelevant: { type: "boolean" },
       namedSources: {
         type: "array",
         items: {
@@ -274,6 +281,7 @@ Topic: `;
 // ─── Types ──────────────────────────────────────────────────────────
 
 interface EditorialBrief {
+  isRelevant: boolean;
   namedSources: { name: string; role: string; quote: string | null }[];
   keyMetrics: { label: string; value: string }[];
   h2Candidates: string[];
@@ -335,10 +343,9 @@ export async function POST(request: NextRequest) {
     const queries = [
       "Bitcoin",
       "Ethereum",
-      "Defi",
-      "Blockchain",
+      "DeFi crypto",
+      "Blockchain crypto",
       "Cryptocurrency",
-      "dolar paralelo",
       "Crypto Exchanges",
     ];
     // Pick 2 queries per run based on hour to rotate
@@ -424,6 +431,14 @@ export async function POST(request: NextRequest) {
           DIRECTOR_SCHEMA
         );
         const brief: EditorialBrief = JSON.parse(briefRaw);
+
+        // Relevance gate — skip off-topic articles
+        if (!brief.isRelevant) {
+          results.errors.push(
+            `Relevance gate: off-topic — ${source.title}`
+          );
+          continue;
+        }
 
         // Quality gate — skip if Director found no metrics AND no named sources
         if (brief.keyMetrics.length === 0 && brief.namedSources.length === 0) {
