@@ -539,15 +539,20 @@ export async function POST(request: NextRequest) {
               continue;
             }
 
-            const isJpeg = base64Image.startsWith("data:image/jpeg");
-            const ext = isJpeg ? "jpg" : "png";
-            const contentType = isJpeg ? "image/jpeg" : "image/png";
-
-            const imageBuffer = Buffer.from(
+            const rawBuffer = Buffer.from(
               base64Image.replace(/^data:image\/\w+;base64,/, ""),
               "base64"
             );
-            const imagePath = `${article.slug}.${ext}`;
+
+            // Compress to JPEG <500KB for WhatsApp/social preview compatibility
+            const sharp = (await import("sharp")).default;
+            const imageBuffer = await sharp(rawBuffer)
+              .resize(1200, 675, { fit: "cover" })
+              .jpeg({ quality: 80 })
+              .toBuffer();
+
+            const imagePath = `${article.slug}.jpg`;
+            const contentType = "image/jpeg";
 
             const { error: uploadError } = await supabase.storage
               .from("article-images")
